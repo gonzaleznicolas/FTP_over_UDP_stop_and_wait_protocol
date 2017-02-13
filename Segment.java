@@ -25,7 +25,7 @@ public class Segment {
 
 	public final static int HEADER_SIZE = 4; // bytes
 	
-	public final static int MAX_PAYLOAD_SIZE = 3; // bytes
+	public final static int MAX_PAYLOAD_SIZE = 1000; // bytes
 	public final static int MAX_SEGMENT_SIZE = HEADER_SIZE + MAX_PAYLOAD_SIZE; // bytes
 	
 	// header fields
