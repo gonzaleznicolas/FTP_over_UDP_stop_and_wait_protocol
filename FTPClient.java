@@ -19,9 +19,12 @@ public class FTPClient {
     private String fileName;
     private int timeOut;
 
-    private Socket socketConnectingToServer;
+    private Socket tcpSocketConnectingToServer;
     private DataInputStream tcpInputStreamFromServer;
     private DataOutputStream tcpOutputStreamToServer;
+
+    private DatagramSocket udpSocketConnectingToServer;
+
 
     /**
      * Constructor to initialize the program 
@@ -50,9 +53,9 @@ public class FTPClient {
         try
         {
             // INITIALIZE TCP STREAMS
-            socketConnectingToServer = new Socket(serverName, serverPort);
-            tcpInputStreamFromServer = new DataInputStream(socketConnectingToServer.getInputStream());
-            tcpOutputStreamToServer = new DataOutputStream(socketConnectingToServer.getOutputStream());
+            tcpSocketConnectingToServer = new Socket(serverName, serverPort);
+            tcpInputStreamFromServer = new DataInputStream(tcpSocketConnectingToServer.getInputStream());
+            tcpOutputStreamToServer = new DataOutputStream(tcpSocketConnectingToServer.getOutputStream());
 
             // INITIAL HANDSHAKE OVER TCP
             tcpOutputStreamToServer.writeUTF(fileName);
@@ -134,6 +137,13 @@ public class FTPClient {
 
             // TRANSFER CHUNK BY CHUNK OVER UDP USING RDT 3.0
             // establish UDP socket and streams
+    		InetAddress ipAddress = InetAddress.getByName(serverName);
+    		udpSocketConnectingToServer = new DatagramSocket();	
+
+
+            Segment segToSend = new Segment(0, arrayOfChunks[0]);
+            DatagramPacket pktToSend = new DatagramPacket(segToSend.getBytes(), segToSend.getBytes().length, ipAddress, serverPort);
+            udpSocketConnectingToServer.send(pktToSend);
 
 
 

@@ -43,6 +43,8 @@ public class FTPServer
         
         DatagramPacket localDatagramPacket = new DatagramPacket(arrayOfByte, arrayOfByte.length);
         this.udpSocket.receive(localDatagramPacket);
+        System.out.println("hi");//Arrays.toString(arrayOfByte));
+        System.out.println(arrayOfByte[7]);
         if (this.ran.nextFloat() > this.serverLoss)
         {
           InetAddress localInetAddress = localDatagramPacket.getAddress();
@@ -163,6 +165,7 @@ public class FTPServer
     FTPServer localFTPServer = new FTPServer(i, f);
     System.out.printf("[Server] Ready to receive client connection request\n", new Object[0]);
     localFTPServer.waitForClient();
+    System.out.println("im hereee");
     localFTPServer.receive();
   }
 }
