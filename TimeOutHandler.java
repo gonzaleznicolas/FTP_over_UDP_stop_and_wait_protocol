@@ -19,9 +19,9 @@ public class TimeOutHandler extends TimerTask
 
 	public void run()
 	{
-		//ftpClient.sendPacket();
+		ftpClient.sendPacket();
         // immediately start the timer
-        //ftpClient.startTimer();
+        ftpClient.startTimer();
         System.out.println("HHHHHHHHHHiiii this is the timeout handler");
 	}
 }

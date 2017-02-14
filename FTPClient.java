@@ -46,7 +46,6 @@ public class FTPClient {
     serverPort = server_port;
     fileName = file_name;
     timeOut = timeout;
-    timer = new Timer();
     }
     
 
@@ -152,7 +151,7 @@ public class FTPClient {
             DatagramPacket pktToSend = new DatagramPacket(segToSend.getBytes(), segToSend.getBytes().length, ipAddress, serverPort);
             udpSocketConnectingToServer.send(pktToSend);
             */
-
+	        timer = new Timer();
             int currentChunk = 0;
             int seqNum = 0;
             for (int i = 0; i < arrayOfChunks.length; i++)  // this loop iterates once for every chunk of the file
@@ -182,7 +181,8 @@ public class FTPClient {
 		            System.out.println("the ack number received is:"+receivedAckNumber);
 		            if (receivedAckNumber == seqNum) // i.e. if the received the ack we were expecting for the packet we just sent
 		            {
-		            	//timer.cancel();
+		            	System.out.println("cancel");
+		            	timer.cancel();
 		            }
 	        	}while(seqNum != receivedAckNumber);
 
@@ -219,6 +219,8 @@ public class FTPClient {
 
     public void startTimer()
     {
+    	timer.cancel();
+        timer = new Timer();
         timeOutHandler = new TimeOutHandler(this);
         timer.schedule(timeOutHandler, timeOut);
     }
