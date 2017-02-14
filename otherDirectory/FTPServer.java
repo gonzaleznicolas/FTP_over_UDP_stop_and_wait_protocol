@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class FTPServer
 {
@@ -58,6 +59,7 @@ public class FTPServer
             this.fileWriter.write(localSegment1.getPayload());
             localSegment2 = new Segment(localSegment1.getSeqNum());
             localDatagramPacket = new DatagramPacket(localSegment2.getBytes(), localSegment2.getLength(), localInetAddress, i);
+            TimeUnit.SECONDS.sleep(1);
             this.udpSocket.send(localDatagramPacket);
             System.out.println("Sent ACK with sequence number: " + localSegment2.getSeqNum());
             if (this.rcvSeq == 0) {

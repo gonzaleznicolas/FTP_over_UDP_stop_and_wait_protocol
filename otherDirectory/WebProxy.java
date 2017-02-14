@@ -258,4 +258,157 @@ public class WebProxy {
                     byte[] responseHeaderLines = new byte[responseIndexAtWhichHeaderLinesEnd+1];
                     for (int i = 0; i <= responseIndexAtWhichHeaderLinesEnd; i++)
                     {
-                        responseHeade
+                        responseHeaderLines[i] = responseBytes[i];
+                    }
+
+                    String responseMessage = new String(responseHeaderLines);
+                    //System.out.println(responseMessage);
+                    //System.out.println("------------------------------------------------");
+                    responseMessage = responseMessage.replace("Connection: keep-alive", "Connection: close");
+                    //System.out.println("HOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+                    //System.out.println(responseMessage);
+                    //System.out.println("HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
+                    
+                    // now that we have the response header lines, we want to extract the Content-Length so we know how many bytes of data to read 
+                    String contentLengthTemp = responseMessage.substring(responseMessage.indexOf("Content-Length:")+16);
+                    String contentLengthTemp2 = contentLengthTemp.substring(0,contentLengthTemp.indexOf("\n")-1);
+                    int contentLength = new Integer (contentLengthTemp2);  // contentLength is the integer representation
+
+                    // create a byte array of the length of the data, then fill it with the remaining data in the
+                    // input stream (i.e. the web page since we already red all the header lines)
+                    byte[] data = new byte[contentLength];
+                    for (int i = 0; i < contentLength; i++)
+                    {
+                        int b = clientInputStream.read();
+                        data[i] = (byte) b;
+                    }
+
+                    // make one array with the full response message: header lines and data
+                    int fullResponseLength = responseHeaderLines.length + data.length;
+                    byte[] fullResponseMessage = new byte[fullResponseLength];
+                    System.arraycopy( responseHeaderLines, 0, fullResponseMessage, 0, responseHeaderLines.length);
+                    System.arraycopy( data, 0, fullResponseMessage, responseHeaderLines.length, data.length );
+
+                    String stringg = new String(fullResponseMessage);
+                    //System.out.println("this is the message forwarded from the internet to the client::::::\n"+stringg);
+
+
+
+                    // PUT THE DATA PORTION INTO A FILE WITH THE DIRECTORY STRUCTURE ACCORDING TO THE URL
+
+                    // create file
+                    String urlWOfileName = hostName + "/" + pathName.substring(0,pathName.lastIndexOf("/"));
+                    String fileName = pathName.substring(pathName.lastIndexOf("/")+1, pathName.length());
+                    //System.out.println(urlWOfileName);
+                    //System.out.println(fileName);
+                    String cumulativePathName = "";
+                    String[] ary = urlWOfileName.split("/");
+                    for (int i = 0; i<ary.length; i++)
+                    {
+                        //System.out.println(ary[i]);
+                        cumulativePathName = cumulativePathName + ary[i] + "/";
+                        File element = new File(cumulativePathName);
+                        boolean val = element.mkdir();
+                        //System.out.println(val);
+                    }
+
+                    String fullFileName = cumulativePathName+fileName;
+                    File f = new File(fullFileName);
+                    try
+                    {
+                        f.createNewFile();
+                    }
+                    catch (Exception e)
+                    {
+                        System.out.println("Exception creating file: " + e.getMessage());
+                    }
+
+                    // write the data to the cache
+
+                    FileOutputStream fout = null;
+                    try
+                    {
+                        fout = new FileOutputStream(fullFileName);
+                        for (int i = 0; i < data.length; i++)
+                        {
+                            fout.write((int) data[i]);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        System.out.println("Exception writing to file: " + e.getMessage());
+                    }
+                    finally
+                    {
+                        try
+                        {
+                            if (fout != null)
+                            {
+                                fout.close();
+                                //System.out.println("closing file");
+                            }
+                        }
+                        catch (IOException ex)
+                        {
+                            System.out.println("error closing file.");
+                        }
+                    }
+                    
+                    
+
+                    // NOW SEND THIS MESSAGE BACK TO THE CLIENT
+                    os.write(fullResponseMessage);
+                    os.flush();
+
+                }
+
+
+
+            }
+        }
+        catch (Exception e){System.out.println("Error2: " + e.getMessage());}
+        finally
+        {
+            if (this.socket != null)
+            {
+                try { socket.close();}
+                catch (IOException ex){System.out.println("Exception in main: " + ex.getMessage());}
+            }
+       }
+
+    }
+
+
+
+    /**
+     * A simple test driver
+    */
+    public static void main(String[] args)
+    {
+        String server = "localhost"; // webproxy and client runs in the same machine
+        int server_port = 0;
+        try 
+        {
+            // check for command line arguments
+            if (args.length == 1)
+            {
+                server_port = Integer.parseInt(args[0]);
+            }
+            else
+            {
+                System.out.println("wrong number of arguments, try again.");
+                System.out.println("usage: java WebProxy port");
+                System.exit(0);
+            }
+            WebProxy proxy = new WebProxy(server_port);
+            System.out.printf("Proxy server started...\n");
+            proxy.start();
+        }
+        catch (Exception e)
+        {
+            System.out.println("Exception in main: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+    }
+}

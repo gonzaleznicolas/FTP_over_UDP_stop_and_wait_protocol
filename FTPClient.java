@@ -147,10 +147,9 @@ public class FTPClient {
             udpSocketConnectingToServer.send(pktToSend);
             */
 
-            boolean fileFullyTransferredAndAcked = false;
             int currentChunk = 0;
             int seqNum = 0;
-            while (fileFullyTransferredAndAcked == false)
+            for (int i = 0; i < arrayOfChunks.length; i++)  // this loop iterates once for every chunk of the file
             {
             	// send the first chunk
 	            Segment segToSend = new Segment(seqNum, arrayOfChunks[currentChunk]);
@@ -158,13 +157,15 @@ public class FTPClient {
                 udpSocketConnectingToServer.send(pktToSend);
 
 	            // receive ack
-	            byte[] receiveAck = new byte[100];
+	            byte[] receiveAck = new byte[4]; // the ack is only 4 bytes so i only need to allocate 4 bytes
 	            DatagramPacket ack = new DatagramPacket(receiveAck, receiveAck.length);
+
+	            System.out.println("packet sent ... waiting to receive ack");
 	            udpSocketConnectingToServer.receive(ack);
 
 	            Segment ackReceived = new Segment(ack);
-	            System.out.println("the ack number is:"+ackReceived.getSeqNum());
-	            
+	            System.out.println("the ack number received is:"+ackReceived.getSeqNum());
+
 
 
 
