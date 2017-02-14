@@ -140,10 +140,37 @@ public class FTPClient {
     		InetAddress ipAddress = InetAddress.getByName(serverName);
     		udpSocketConnectingToServer = new DatagramSocket();	
 
-
+    		/*
+    		// Sending one packet
             Segment segToSend = new Segment(0, arrayOfChunks[0]);
             DatagramPacket pktToSend = new DatagramPacket(segToSend.getBytes(), segToSend.getBytes().length, ipAddress, serverPort);
             udpSocketConnectingToServer.send(pktToSend);
+            */
+
+            boolean fileFullyTransferredAndAcked = false;
+            int currentChunk = 0;
+            int seqNum = 0;
+            while (fileFullyTransferredAndAcked == false)
+            {
+            	// send the first chunk
+	            Segment segToSend = new Segment(seqNum, arrayOfChunks[currentChunk]);
+	            DatagramPacket pktToSend = new DatagramPacket(segToSend.getBytes(), segToSend.getBytes().length, ipAddress, serverPort);
+                udpSocketConnectingToServer.send(pktToSend);
+
+	            // receive ack
+	            byte[] receiveAck = new byte[100];
+	            DatagramPacket ack = new DatagramPacket(receiveAck, receiveAck.length);
+	            udpSocketConnectingToServer.receive(ack);
+
+	            Segment ackReceived = new Segment(ack);
+	            System.out.println("the ack number is:"+ackReceived.getSeqNum());
+	            
+
+
+
+	            if (seqNum == 0) {seqNum = 1;}else {seqNum = 0;} // alternate sequence number
+            	currentChunk++;
+            }
 
 
 

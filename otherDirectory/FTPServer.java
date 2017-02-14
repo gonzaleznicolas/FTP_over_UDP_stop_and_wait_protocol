@@ -45,7 +45,7 @@ public class FTPServer
         this.udpSocket.receive(localDatagramPacket);
         System.out.println("hi");//Arrays.toString(arrayOfByte));
         System.out.println(arrayOfByte[7]);
-        if (this.ran.nextFloat() > this.serverLoss)
+        if (this.ran.nextFloat() > this.serverLoss) // if we dont lose packet
         {
           InetAddress localInetAddress = localDatagramPacket.getAddress();
           int i = localDatagramPacket.getPort();
