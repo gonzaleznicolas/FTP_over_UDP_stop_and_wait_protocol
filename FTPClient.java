@@ -26,7 +26,7 @@ public class FTPClient {
     private DatagramSocket udpSocketConnectingToServer;
 	private DatagramPacket pktToSend;
 
-    private Timer timer;
+    private Timer timer = new Timer();
     private TimeOutHandler timeOutHandler;
 
 
@@ -160,6 +160,11 @@ public class FTPClient {
 	            Segment segToSend = new Segment(seqNum, arrayOfChunks[currentChunk]);
 	            pktToSend = new DatagramPacket(segToSend.getBytes(), segToSend.getBytes().length, ipAddress, serverPort);
 	            sendPacket();
+		        System.out.println("packet sent with sequence number " + seqNum +" .. now waiting to receive ack");
+
+
+                // immediately start the timer
+		        startTimer();
 
 	            // receive ack
 	            byte[] receiveAck = new byte[4]; // the ack is only 4 bytes so i only need to allocate 4 bytes
@@ -200,6 +205,12 @@ public class FTPClient {
     	{
     		System.out.println("There was an excepion sending the packet");
     	}
+    }
+
+    public void startTimer()
+    {
+        timeOutHandler = new TimeOutHandler(this);
+        timer.schedule(timeOutHandler, timeOut);
     }
 
 /**
