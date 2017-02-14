@@ -26,6 +26,9 @@ public class FTPClient {
     private DatagramSocket udpSocketConnectingToServer;
 	private DatagramPacket pktToSend;
 
+    private Timer timer;
+    private TimeOutHandler timeOutHandler;
+
 
 
     /**
