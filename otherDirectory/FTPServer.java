@@ -59,7 +59,7 @@ public class FTPServer
             this.fileWriter.write(localSegment1.getPayload());
             localSegment2 = new Segment(localSegment1.getSeqNum());
             localDatagramPacket = new DatagramPacket(localSegment2.getBytes(), localSegment2.getLength(), localInetAddress, i);
-            TimeUnit.SECONDS.sleep(1);
+            //TimeUnit.SECONDS.sleep(1);
             this.udpSocket.send(localDatagramPacket);
             System.out.println("Sent ACK with sequence number: " + localSegment2.getSeqNum());
             if (this.rcvSeq == 0) {
