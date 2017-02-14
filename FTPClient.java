@@ -135,7 +135,7 @@ public class FTPClient {
             }
             if (arrayOfChunks[arrayOfChunks.length-1].length == 0)
                 arrayOfChunks = Arrays.copyOf(arrayOfChunks, arrayOfChunks.length-1);
-            System.out.println(Arrays.deepToString(arrayOfChunks));
+            //System.out.println(Arrays.deepToString(arrayOfChunks));
 
             // at this point, arrayOfChunks is an array of arrays of bytes. all of those bytes together are the file
             // all of the arrays are MAX_PAYLOAD_SIZE in length, except for the last one which may be smaller.
@@ -156,11 +156,13 @@ public class FTPClient {
             int seqNum = 0;
             for (int i = 0; i < arrayOfChunks.length; i++)  // this loop iterates once for every chunk of the file
             {
+            	System.out.println("\nPACKET #"+i);
+
             	// send the first chunk
 	            Segment segToSend = new Segment(seqNum, arrayOfChunks[currentChunk]);
 	            pktToSend = new DatagramPacket(segToSend.getBytes(), segToSend.getBytes().length, ipAddress, serverPort);
 	            sendPacket();
-		        System.out.println("packet sent with sequence number " + seqNum +" .. now waiting to receive ack");
+		        System.out.println(" - Send ACK" + seqNum +" ... now wait to receive ack.");
 
 
                 // immediately start the timer
@@ -178,10 +180,10 @@ public class FTPClient {
 
 		            Segment ackReceived = new Segment(ack);
 		            receivedAckNumber = ackReceived.getSeqNum();
-		            System.out.println("the ack number received is:"+receivedAckNumber);
+		            System.out.println(" - ACK"+receivedAckNumber+" received.");
 		            if (receivedAckNumber == seqNum) // i.e. if the received the ack we were expecting for the packet we just sent
 		            {
-		            	System.out.println("cancel");
+		            	System.out.println(" - Correct ACK arrived. Cancel timer.");
 		            	timer.cancel();
 		            }
 	        	}while(seqNum != receivedAckNumber);
@@ -255,7 +257,7 @@ public class FTPClient {
         
         System.out.printf("sending file \'%s\' to server...\n", file_name);
         ftp.send();
-        System.out.println("file transfer completed.");
+        System.out.println("\n\n------File transfer completed.------");
     }
 
 }

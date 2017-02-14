@@ -22,6 +22,6 @@ public class TimeOutHandler extends TimerTask
 		ftpClient.sendPacket();
         // immediately start the timer
         ftpClient.startTimer();
-        System.out.println("HHHHHHHHHHiiii this is the timeout handler");
+        System.out.println("    - The ACK did not arrive. Re-send the packet and re-start the timer.");
 	}
 }
