@@ -166,15 +166,24 @@ public class FTPClient {
                 // immediately start the timer
 		        startTimer();
 
-	            // receive ack
-	            byte[] receiveAck = new byte[4]; // the ack is only 4 bytes so i only need to allocate 4 bytes
-	            DatagramPacket ack = new DatagramPacket(receiveAck, receiveAck.length);
+                // if i receive an ack number which is not of the packet i just sent, ignore it, and keep
+                // waiting for the correct ack
+                int receivedAckNumber=2;
+                do{
+		            // receive ack
+		            byte[] receiveAck = new byte[4]; // the ack is only 4 bytes so i only need to allocate 4 bytes
+		            DatagramPacket ack = new DatagramPacket(receiveAck, receiveAck.length);
 
-	            System.out.println("packet sent ... waiting to receive ack");
-	            udpSocketConnectingToServer.receive(ack);
+		            udpSocketConnectingToServer.receive(ack);
 
-	            Segment ackReceived = new Segment(ack);
-	            System.out.println("the ack number received is:"+ackReceived.getSeqNum());
+		            Segment ackReceived = new Segment(ack);
+		            receivedAckNumber = ackReceived.getSeqNum();
+		            System.out.println("the ack number received is:"+receivedAckNumber);
+		            if (receivedAckNumber == seqNum) // i.e. if the received the ack we were expecting for the packet we just sent
+		            {
+		            	timer.cancel();
+		            }
+	        	}while(seqNum != receivedAckNumber);
 
 
 
