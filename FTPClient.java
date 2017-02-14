@@ -24,6 +24,8 @@ public class FTPClient {
     private DataOutputStream tcpOutputStreamToServer;
 
     private DatagramSocket udpSocketConnectingToServer;
+	private DatagramPacket pktToSend;
+
 
 
     /**
@@ -153,8 +155,8 @@ public class FTPClient {
             {
             	// send the first chunk
 	            Segment segToSend = new Segment(seqNum, arrayOfChunks[currentChunk]);
-	            DatagramPacket pktToSend = new DatagramPacket(segToSend.getBytes(), segToSend.getBytes().length, ipAddress, serverPort);
-                udpSocketConnectingToServer.send(pktToSend);
+	            pktToSend = new DatagramPacket(segToSend.getBytes(), segToSend.getBytes().length, ipAddress, serverPort);
+	            sendPacket();
 
 	            // receive ack
 	            byte[] receiveAck = new byte[4]; // the ack is only 4 bytes so i only need to allocate 4 bytes
@@ -186,6 +188,16 @@ public class FTPClient {
     }
 
     
+    public void sendPacket()
+    {
+    	try{
+        	udpSocketConnectingToServer.send(pktToSend);
+    	}
+    	catch (IOException e)
+    	{
+    		System.out.println("There was an excepion sending the packet");
+    	}
+    }
 
 /**
          * A simple test driver
