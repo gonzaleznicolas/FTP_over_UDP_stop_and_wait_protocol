@@ -162,7 +162,7 @@ public class FTPClient {
 	            Segment segToSend = new Segment(seqNum, arrayOfChunks[currentChunk]);
 	            pktToSend = new DatagramPacket(segToSend.getBytes(), segToSend.getBytes().length, ipAddress, serverPort);
 	            sendPacket();
-		        System.out.println(" - Send ACK" + seqNum +" ... now wait to receive ack.");
+		        System.out.println(" - Send ACK" + seqNum +" ... now wait to receive ack and start timer.");
 
 
                 // immediately start the timer
