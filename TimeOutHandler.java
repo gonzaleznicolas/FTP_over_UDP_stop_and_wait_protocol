@@ -1,6 +1,9 @@
-/*
+/**
  * @author      Nicolas Gonzalez
+ * @version     1.0, 14 Feb 2017
+ *
  */
+
 
 import java.util.TimerTask;
 import java.net.*;
@@ -10,7 +13,7 @@ import java.io.*;
 
 public class TimeOutHandler extends TimerTask
 {
-    private FTPClient ftpClient;
+    private FTPClient ftpClient; // reference to the FTPClient
 
 	public TimeOutHandler(FTPClient c)
 	{
