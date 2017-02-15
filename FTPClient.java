@@ -265,6 +265,7 @@ public class FTPClient {
         System.out.printf("sending file \'%s\' to server...\n", file_name);
         ftp.send();
         System.out.println("File transfer completed.");
+        System.exit(0);
     }
 
 }
