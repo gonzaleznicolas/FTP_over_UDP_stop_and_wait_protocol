@@ -137,7 +137,7 @@ public class FTPClient {
             //System.out.println(Arrays.deepToString(arrayOfChunks));
 
 
-            // at this point, arrayOfChunks is an array of arrays of bytes. all of those bytes together are the file
+            // at this point, arrayOfChunks is an array of arrays of bytes. all of those bytes together are the file.
             // all of the arrays are MAX_PAYLOAD_SIZE in length, except for the last one which may be smaller.
 
             // TRANSFER CHUNK BY CHUNK OVER UDP USING alternating bit stop-and-wait-protocol
@@ -193,7 +193,7 @@ public class FTPClient {
             // DONE TRANSFERRING FILE, SEND END OF TRANSMISSION MESSAGE OVER TCP
             System.out.println("\nDisconnecting...");
             tcpOutputStreamToServer.writeByte(0);
-
+            tcpOutputStreamToServer.flush();
 
             // CLEANUP
             timer.cancel();
